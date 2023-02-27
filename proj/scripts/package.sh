@@ -31,6 +31,7 @@ on_trap() {
 trap on_trap EXIT INT TERM
 
 SCRIPTS_DIR="$ROOT_DIR"/scripts
+VENV_DIR="$ROOT_DIR/venv" # the root of the venv
 
 source "$SCRIPTS_DIR"/utils.sh
 
@@ -38,7 +39,7 @@ DIST_DIR="$ROOT_DIR/dist"
 BUILD_DIR="$ROOT_DIR/build"
 ENV_SH_FILE="$SCRIPTS_DIR/env_py.sh" # optional for custom TWINE_REPO_URL
 
-activate_venv
+activate_venv "$VENV_DIR"
 
 source_env_sh_file "$ENV_SH_FILE"
 

@@ -2,3 +2,4 @@ pytest
 pylint
 black
 isort
+flake8

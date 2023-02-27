@@ -44,16 +44,6 @@ trap on_trap EXIT INT TERM
 PROJECT_DIR="${1}"
 PYTHON_EXEC_PATH="${2:-}"
 
-if [[ -d "$PROJECT_DIR" ]] ; then
-  echo -e "#########################################################################"
-  echo -e "## \033[31mERROR: \033[0m                                                "
-  echo -e "## the $PROJECT_DIR exists! Please delete it before running this script! "
-  echo -e "## You can use the following command:                                    "
-  echo -e "## rm -rf $PROJECT_DIR                                                   "
-  echo -e "#########################################################################"
-  exit 1
-fi
-
 info() {
   echo -e "\n ==> $1"
 }
@@ -65,7 +55,7 @@ mkdir -p "$PROJECT_DIR/doc"
 info "Done."
 
 info "Copying the project template structure"
-cp -R "$ROOT_DIR"/proj/* "$PROJECT_DIR"
+cp -R -i "$ROOT_DIR"/proj/ "$PROJECT_DIR" || true # TODO: for some reasons this returns 1 on interactive input???
 info "Done."
 
 info "Make target shell scripts executable"
@@ -73,7 +63,7 @@ find "$PROJECT_DIR/scripts" -name "*.sh" -type f -exec chmod +x {} \;
 info "Done."
 
 info "Init git repository in the $PROJECT_DIR"
-git init
+cd "$PROJECT_DIR" && git init
 info "Done."
 
 info "In order to push your changes to remote repository set your git remote url:"

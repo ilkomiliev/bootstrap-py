@@ -46,9 +46,11 @@ ENV_SH_FILE="$SCRIPTS_DIR/env_py.sh" # optional env settings for the venv like P
 
 source "$SCRIPTS_DIR"/utils.sh
 
-PY_EXEC="${1:-}" # optional, if the correct python executable is not in the PATH
+PY_EXEC="${1:- }" # optional, if the correct python executable is not in the PATH
 
-[[ -n $PY_EXEC ]] || PY_EXEC="$(which python)"
+if [[ "${PY_EXEC}" == " " ]] ; then
+  PY_EXEC="$(which python || which python3)"
+fi
 
 info "Using python from: $PY_EXEC"
 
@@ -61,7 +63,7 @@ if [[ -d "${VENV_DIR}" ]]; then
   rm -rf "${VENV_DIR}"
 fi
 
-source_env_file "$ENV_SH_FILE"
+source_env_sh_file "$ENV_SH_FILE"
 
 info "Creating venv"
 "$PY_EXEC" -m venv "${VENV_DIR}"

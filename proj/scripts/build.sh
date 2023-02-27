@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eu -o pipefail
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
 usage() {
@@ -26,30 +28,31 @@ on_trap() {
 trap on_trap EXIT INT TERM
 
 SCRIPTS_DIR="$ROOT_DIR"/scripts
+VENV_DIR="$ROOT_DIR/venv" # the root of the venv
 
 source "$SCRIPTS_DIR"/utils.sh
 
-activate_venv
+activate_venv "$VENV_DIR"
 
 info "Updating pip"
 pip install --upgrade pip
 info "Done."
 
 info "Installing requirements from:"
-for f in $(find . -name "*requirements.txt") ; do
+for f in $(find . -name "requirements*.txt") ; do
   echo "$f"
   pip install -r "$f"
 done
 info "Done."
 
 info "Running flake8"
-flake8 ./finca_jwt_utils --count --select=E9,F63,F7,F82 --show-source --statistics
-flake8 ./finca_jwt_utils --count --exit-zero --max-complexity=10 --max-line-length=125 --statistics
+flake8 ./src --count --select=E9,F63,F7,F82 --show-source --statistics
+flake8 ./src --count --exit-zero --max-complexity=10 --max-line-length=125 --statistics
 info "Done."
 
 info "Running pylint"
-pylint
-info "Done-"
+pylint ./src || echo "ERRORS FOUND!!!"
+info "Done."
 
 info "Running pytest"
 pytest
