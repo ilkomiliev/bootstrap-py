@@ -5,7 +5,27 @@ set -eu -o pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
 usage() {
-  cat <<< EOF
+  cat <<EOF
+
+  This script (re-)creates new python virtual environment. If an existing one is found it will be deleted and re-created.
+  The environment will be created in the venv sub-folder. For customizing the environment, env_py.sh can be used.
+
+  Usage:
+
+  $0 [python_executable]
+
+  where as:
+    python_executable: optional, path to a python exec to be used for the venv, default is the one found in the PATH
+
+  Examples:
+  1)
+    $0
+
+    will create a new virtual environment, using the default python executable from PATH
+  2)
+    $0 /python/python3.10.1/python
+
+    will create a new virtual environment, using the python executable from the given location
 
 EOF
 }

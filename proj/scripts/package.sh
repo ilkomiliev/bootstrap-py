@@ -5,7 +5,17 @@ set -eu -o pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
 usage() {
-  cat <<< EOF
+  cat <<EOF
+
+  Packages and uploads to a pypi artifact repository. If custom repository is used env_py.sh can be used to define it.
+  The script uses setuptools, wheel and twine. Credentials can be passed using the standard twine environment variables:
+  TWINE_USERNAME and TWINE_PASSWORD
+
+  It requires existing python virtual environment. One can be set with the provided setup_venv.sh script.
+
+  Usage:
+  1)
+    $0
 
 EOF
 }
@@ -24,8 +34,8 @@ SCRIPTS_DIR="$ROOT_DIR"/scripts
 
 source "$SCRIPTS_DIR"/utils.sh
 
-DIST_DIR=""
-BUILD_DIR=""
+DIST_DIR="$ROOT_DIR/dist"
+BUILD_DIR="$ROOT_DIR/build"
 ENV_SH_FILE="$SCRIPTS_DIR/env_py.sh" # optional for custom TWINE_REPO_URL
 
 activate_venv
@@ -35,6 +45,13 @@ source_env_sh_file "$ENV_SH_FILE"
 info "Cleaning up the dist and build dirs"
 [[ -d "$DIST_DIR" ]] && rm -rf "$DIST_DIR"
 [[ -d "$BUILD_DIR" ]] && rm -rf "$BUILD_DIR"
+info "Done."
+
+info "Cleaning up rest overs eggs"
+for dir in $(find . -name "*.egg-info" -type d -print) ; do
+  echo "Removing $dir"
+  rm -rf "${dir}"
+done
 info "Done."
 
 info "Installing setuptools, wheel, twine"
